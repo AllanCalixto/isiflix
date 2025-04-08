@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "tb_categoria")
+@Table(name = "tbl_categoria")
 public class Categoria {
 
     @Id
@@ -13,7 +13,7 @@ public class Categoria {
     @Column(name = "id_categoria")
     private Integer id;
 
-    @Column(name = "nome_categoria", length = 100, nullable = false, unique = true)
+    @Column(name = "nome_categoria", length = 100, unique = true)
     private String nome;
 
     public Integer getId() {
