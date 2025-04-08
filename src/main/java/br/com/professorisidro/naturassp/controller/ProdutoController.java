@@ -33,7 +33,7 @@ public class ProdutoController {
     }
 
     @PostMapping("/produto/upload")
-    public ResponseEntity<String> uploadFoto(@RequestParam(name = "arquivo")MultipartFile arquivo) {
+    public ResponseEntity<String> uploadFoto(@RequestParam(name = "arquivo") MultipartFile arquivo) {
 
         String path = upload.uploadFile(arquivo);
         if (path != null) {
@@ -47,10 +47,19 @@ public class ProdutoController {
         return ResponseEntity.ok(service.listarDisponiveis());
     }
 
-    @GetMapping("/produtos/categoria/{id}")
-    public ResponseEntity<ArrayList<Produto>> recuperarPorCategoria(@PathVariable (name = "id") int idCat) {
+    @GetMapping("/produto/categoria/{id}")
+    public ResponseEntity<ArrayList<Produto>> recuperarPorCategoria(@PathVariable(name = "id") int idCat) {
         Categoria cat = new Categoria();
         cat.setId(idCat);
         return ResponseEntity.ok(service.listarPorCategoria(cat));
+    }
+
+    @GetMapping("/produto/{id}")
+    public ResponseEntity<Produto> recuperarPorId(@PathVariable(name = "id") int idProduto) {
+        Produto prod = service.recuperarProdutoPorId(idProduto);
+        if (prod != null) {
+            return ResponseEntity.ok(prod);
+        }
+        return ResponseEntity.notFound().build();
     }
 }

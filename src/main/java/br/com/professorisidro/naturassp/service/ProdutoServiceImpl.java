@@ -45,7 +45,7 @@ public class ProdutoServiceImpl implements IProdutoService {
 
     @Override
     public ArrayList<Produto> listarTodos() {
-        return (ArrayList<Produto>)dao.findAll();
+        return (ArrayList<Produto>) dao.findAll();
     }
 
     @Override
@@ -62,4 +62,10 @@ public class ProdutoServiceImpl implements IProdutoService {
     public ArrayList<Produto> listarPorCategoria(Categoria categoria) {
         return dao.findAllByDisponivelAndCategoria(1, categoria);
     }
+
+    @Override
+    public Produto recuperarProdutoPorId(int id) {
+        return dao.findById(id).orElse(null);
+    }
+
 }
