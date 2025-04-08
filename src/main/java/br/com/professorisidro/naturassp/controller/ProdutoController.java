@@ -1,15 +1,15 @@
 package br.com.professorisidro.naturassp.controller;
 
+import br.com.professorisidro.naturassp.model.Categoria;
 import br.com.professorisidro.naturassp.model.Produto;
 import br.com.professorisidro.naturassp.service.IProdutoService;
 import br.com.professorisidro.naturassp.service.IUploadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 
 @RestController
 public class ProdutoController {
@@ -40,5 +40,17 @@ public class ProdutoController {
             return ResponseEntity.status(201).body(path);
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @GetMapping("/produto")
+    public ResponseEntity<ArrayList<Produto>> recuperarTodos() {
+        return ResponseEntity.ok(service.listarDisponiveis());
+    }
+
+    @GetMapping("/produtos/categoria/{id}")
+    public ResponseEntity<ArrayList<Produto>> recuperarPorCategoria(@PathVariable (name = "id") int idCat) {
+        Categoria cat = new Categoria();
+        cat.setId(idCat);
+        return ResponseEntity.ok(service.listarPorCategoria(cat));
     }
 }
