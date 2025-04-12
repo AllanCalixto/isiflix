@@ -17,50 +17,49 @@ import java.util.Date;
 
 public class JWTTokenUtil {
 
-    private static final String SECRET_KEY  = "N@tur@55pW3bS3cur1tyT0k3n202101";
-    private static final int    EXPIRATION  = 2*60*1000;
-    private static final String TK_PREFIX   = "Bearer";
-    private static final String HEADER_AUTH = "Authorization";
+    private static final String SECRET_KEY = "N@tur@55pW3bS3cur1tyT0k3n202101234567890"; // Chave atualizada para ter 256 bits
+    private static final int EXPIRATION = 2 * 60 * 1000; // Expiração em milissegundos
 
     public static String generateToken(Usuario usuario) {
         Key secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
-        String jwt = Jwts.builder()
-                .setSubject(usuario.getUsername())
-                .setIssuer("*Professorisidro*")
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION))
-                .signWith(secretKey, SignatureAlgorithm.HS256)
+        return Jwts.builder()
+                .setSubject(usuario.getUsername()) // Identificação do usuário
+                .setIssuer("*Professorisidro*") // Emissor do token
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION)) // Expiração
+                .signWith(secretKey, SignatureAlgorithm.HS256) // Algoritmo de assinatura
                 .compact();
-        return TK_PREFIX + jwt;
-    }
-
-    public static boolean isIssuerValid(String issuer) {
-        return issuer.equals("*Professorisidro*");
-    }
-
-    public static boolean isSubjectValid(String subject) {
-        return subject != null && subject.length() > 0;
-    }
-
-    public static boolean isExpirationValid(Date expiration) {
-        return expiration.after(new Date(System.currentTimeMillis()));
     }
 
     public static Authentication decodeToken(HttpServletRequest request) {
-        String token = request.getHeader(HEADER_AUTH);
-        token = token.replace(TK_PREFIX, ""); // retirei o Bearer
+        try {
+            String token = request.getHeader("Authorization").replace("Bearer", "").trim();
+            Jws<Claims> claimsJws = Jwts.parserBuilder()
+                    .setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.getBytes())) // Chave de assinatura
+                    .build()
+                    .parseClaimsJws(token);
 
-        Jws<Claims> jswClaims = Jwts.parser()
-                .setSigningKey(SECRET_KEY.getBytes())
-                .build()
-                .parseSignedClaims(token);
-        String username = jswClaims.getBody().getSubject();
-        String emissor = jswClaims.getBody().getIssuer();
-        Date expira = jswClaims.getBody().getExpiration();
+            String username = claimsJws.getBody().getSubject();
+            String issuer = claimsJws.getBody().getIssuer();
+            Date expiration = claimsJws.getBody().getExpiration();
 
-        if (isSubjectValid(username) && isIssuerValid(emissor) && isExpirationValid(expira)) {
-            return new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+            if (isIssuerValid(issuer) && isSubjectValid(username) && isExpirationValid(expiration)) {
+                return new UsernamePasswordAuthenticationToken(username, null, Collections.emptyList());
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Log para depuração
         }
-        return null;
+        return null; // Retorna null em caso de falha na validação
     }
 
+    private static boolean isIssuerValid(String issuer) {
+        return "*Professorisidro*".equals(issuer);
+    }
+
+    private static boolean isSubjectValid(String subject) {
+        return subject != null && !subject.isEmpty();
+    }
+
+    private static boolean isExpirationValid(Date expiration) {
+        return expiration.after(new Date(System.currentTimeMillis()));
+    }
 }

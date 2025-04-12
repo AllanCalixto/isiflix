@@ -6,29 +6,33 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Component
 public class TokenFilter extends OncePerRequestFilter {
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-        /**
-         * Requisições que não precisam de autenticação, não levam em conta um item do cabeçalho:
-         *   -- Authorization --
-         *
-         * Requisições que precisam de autenticação, vão precisar de uma informação de autorização do cabeçalho:
-         * -- Se o token for válido, eu monto um cabeçalho de autorização e encaminho a requisição. --
-         *
-         * **/
-        if (request.getHeader("Authorization") != null) {
-            // Se eu tiver um cabeçalho com token, preciso decodificar este token.
-            Authentication auth = JWTTokenUtil.decodeToken(request);
+        String path = request.getRequestURI();
+        if ("/error".equals(path) || "/login".equals(path)) { // Ignorar rotas públicas
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            // Se for válido, vai para o contexto da requisição um objeto que representa o token
-            // Senão vai null
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        try {
+            String authorizationHeader = request.getHeader("Authorization");
+            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+                Authentication auth = JWTTokenUtil.decodeToken(request);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Retorna 401 em caso de erro no token
+            return;
         }
         filterChain.doFilter(request, response);
     }

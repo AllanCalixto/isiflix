@@ -5,6 +5,7 @@ import br.com.professorisidro.naturassp.security.JWTToken;
 import br.com.professorisidro.naturassp.security.JWTTokenUtil;
 import br.com.professorisidro.naturassp.service.IUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,17 +18,14 @@ public class UsuarioController {
     private IUsuarioService service;
 
     @PostMapping("/login")
-    public ResponseEntity<JWTToken> fazerLogin (@RequestBody Usuario dadosLogin) {
-        System.out.println("DADOS: "+ dadosLogin);
-        Usuario user = service.recuperarUsuario(dadosLogin);
-        if (user != null) { // Usuário existente, precisa conferir a senha
-            if(user.getSenha().equals(dadosLogin.getSenha())) {
-                JWTToken jwtToken = new JWTToken();
-                jwtToken.setToken(JWTTokenUtil.generateToken(user));
-                return ResponseEntity.ok(jwtToken);
-            }
-            return ResponseEntity.status(403).build(); // Usuário não tem autorização
+    public ResponseEntity<JWTToken> fazerLogin(@RequestBody Usuario dadosLogin) {
+        Usuario user = service.recuperarUsuario(dadosLogin); // Valida o usuário no banco
+        if (user != null && user.getSenha().equals(dadosLogin.getSenha())) {
+            JWTToken jwtToken = new JWTToken();
+            jwtToken.setToken(JWTTokenUtil.generateToken(user)); // Gera o token
+            return ResponseEntity.ok(jwtToken); // Retorna o token como resposta
         }
-        return ResponseEntity.notFound().build(); // Usuário não encontrado.
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build(); // Senha ou usuário inválido
     }
 }
+
