@@ -1,0 +1,58 @@
+CREATE TABLE tbl_categoria (
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    descricao VARCHAR(100) UNIQUE
+);
+
+CREATE TABLE tbl_cliente (
+    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+    nome_cliente VARCHAR(100) NOT NULL,
+    email_cliente VARCHAR(100) UNIQUE NOT NULL,
+    telefone_cliente VARCHAR(20) UNIQUE NOT NULL,
+    cep_cliente VARCHAR(10) NOT NULL,
+    logradouro VARCHAR(100),
+    numero VARCHAR(10),
+    complemento VARCHAR(50),
+    bairro VARCHAR(100),
+    cidade VARCHAR(100),
+    estado CHAR(2)
+);
+
+CREATE TABLE tbl_pedido (
+    id_pedido INT AUTO_INCREMENT PRIMARY KEY,
+    data_pedido DATE,
+    valor_total DOUBLE,
+    observacoes VARCHAR(500),
+    status INT,
+    id_cliente INT,
+    FOREIGN KEY (id_cliente) REFERENCES tbl_cliente (id_cliente)
+);
+
+CREATE TABLE tbl_itempedido (
+    num_seq INT AUTO_INCREMENT PRIMARY KEY,
+    qtde_item INT,
+    preco_unitario DOUBLE,
+    preco_total DOUBLE,
+    id_pedido INT,
+    id_produto INT,
+    FOREIGN KEY (id_pedido) REFERENCES tbl_pedido (id_pedido),
+    FOREIGN KEY (id_produto) REFERENCES tbl_produto (id_produto)
+);
+
+CREATE TABLE tbl_produto (
+    id_produto INT AUTO_INCREMENT PRIMARY KEY,
+    nome_produto VARCHAR(100) NOT NULL,
+    detalhe_produto VARCHAR(500),
+    link_foto VARCHAR(255) NOT NULL,
+    preco_produto DOUBLE NOT NULL,
+    disponivel INT NOT NULL,
+    id_categoria INT,
+    FOREIGN KEY (id_categoria) REFERENCES tbl_categoria (id_categoria)
+);
+
+CREATE TABLE tbl_usuario (
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(45) UNIQUE NOT NULL,
+    email VARCHAR(50) UNIQUE NOT NULL,
+    senha VARCHAR(100) NOT NULL,
+    nome_usuario VARCHAR(50) NOT NULL
+);
