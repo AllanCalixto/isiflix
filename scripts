@@ -27,17 +27,6 @@ CREATE TABLE tbl_pedido (
     FOREIGN KEY (id_cliente) REFERENCES tbl_cliente (id_cliente)
 );
 
-CREATE TABLE tbl_itempedido (
-    num_seq INT AUTO_INCREMENT PRIMARY KEY,
-    qtde_item INT,
-    preco_unitario DOUBLE,
-    preco_total DOUBLE,
-    id_pedido INT,
-    id_produto INT,
-    FOREIGN KEY (id_pedido) REFERENCES tbl_pedido (id_pedido),
-    FOREIGN KEY (id_produto) REFERENCES tbl_produto (id_produto)
-);
-
 CREATE TABLE tbl_produto (
     id_produto INT AUTO_INCREMENT PRIMARY KEY,
     nome_produto VARCHAR(100) NOT NULL,
@@ -47,6 +36,17 @@ CREATE TABLE tbl_produto (
     disponivel INT NOT NULL,
     id_categoria INT,
     FOREIGN KEY (id_categoria) REFERENCES tbl_categoria (id_categoria)
+);
+
+CREATE TABLE tbl_itempedido (
+    num_seq INT AUTO_INCREMENT PRIMARY KEY,
+    qtde_item INT,
+    preco_unitario DOUBLE,
+    preco_total DOUBLE,
+    id_pedido INT,
+    id_produto INT,
+    FOREIGN KEY (id_pedido) REFERENCES tbl_pedido (id_pedido),
+    FOREIGN KEY (id_produto) REFERENCES tbl_produto (id_produto)
 );
 
 CREATE TABLE tbl_usuario (

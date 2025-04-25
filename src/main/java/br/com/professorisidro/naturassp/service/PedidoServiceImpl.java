@@ -19,11 +19,6 @@ public class PedidoServiceImpl implements IPedidoService {
 //            Aqui em tese vem a regra de negocios
             for (ItemPedido item: novo.getItensPedido()) {
                 item.setPrecoUnitario(item.getProduto().getPreco());
-                if (item.getQtdeItem() >= 5) { // Aplicar 20% de desconto.
-                    item.setPrecoTotal(item.getPrecoUnitario() * item.getQtdeItem() * 0.8);
-                } else {
-                    item.setPrecoTotal(item.getPrecoUnitario() * item.getQtdeItem());
-                }
                 total += item.getPrecoTotal();
             }
             for (ItemPedido item: novo.getItensPedido()) {

@@ -18,11 +18,14 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, TokenFilter tokenFilter) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/produto", "/error").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/produto", "/error").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/pedido").permitAll()
                                 .requestMatchers(HttpMethod.GET).permitAll()
-                        //.anyRequest().authenticated()
+                                .requestMatchers(HttpMethod.PUT).permitAll()
+                        //.anyRequest().authenticated() // Se necessário, ajuste isso
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
