@@ -4,6 +4,8 @@ import br.com.professorisidro.naturassp.model.Cliente;
 
 public interface IClienteService {
 
-    public Cliente buscarPeloTelefone(String telefone);
+    public Cliente buscarPeloCPF(String cpf);
     public Cliente atualizarDados(Cliente dadosOriginais);
+
+
 }
