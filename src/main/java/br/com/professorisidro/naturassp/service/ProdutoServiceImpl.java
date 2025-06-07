@@ -64,6 +64,11 @@ public class ProdutoServiceImpl implements IProdutoService {
     }
 
     @Override
+    public ArrayList<Produto> listarPorPalavraChave(String palavraChave) {
+        return dao.findAllByNomeContainingOrDetalheContaining(palavraChave, palavraChave);
+    }
+
+    @Override
     public Produto recuperarProdutoPorId(int id) {
         return dao.findById(id).orElse(null);
     }

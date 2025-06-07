@@ -2,6 +2,7 @@ package br.com.professorisidro.naturassp.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +22,9 @@ public class Cliente {
 
     @Column(name = "telefone_cliente", length = 20, nullable = false, unique = true)
     private String telefone;
+
+    @Column(name = "data_nasc")
+    private LocalDate dataNasc;
 
     @Column(name = "cpf_cliente", length = 15, nullable = false)
     private String cpf;
@@ -46,6 +50,14 @@ public class Cliente {
     @Column(name = "estado", length = 2)
     private String estado;
 
+
+    public LocalDate getDataNasc() {
+        return dataNasc;
+    }
+
+    public void setDataNasc(LocalDate dataNasc) {
+        this.dataNasc = dataNasc;
+    }
 
     public int getIdCliente() {
         return idCliente;
